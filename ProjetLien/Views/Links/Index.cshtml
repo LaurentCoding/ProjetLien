@@ -1,0 +1,27 @@
+﻿@model ListLinksViewModel;
+@{
+	ViewData["Title"] = "Les liens";
+}
+
+<h1>Les liens : </h1>
+<i>Vous trouverez si dessous les liens ajoutés par la communauté...</i>
+<div class="text-center mt-3 row ">
+	@foreach(var link in Model.LstLinks)
+	{
+		<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="card" style="">
+				<img class="card-img-top" src="https://picsum.photos/200/300" alt="Card image cap">
+				<div class="card-body">
+					<h5 class="card-title">@link.Title</h5>
+					<p class="card-text">@link.Description</p>
+					<a href="@link.URL" class="btn btn-primary">Go !</a>
+				</div>
+			</div>
+		<div>
+
+			</div>
+		
+			@link.Title : @link.URL
+		</div>
+	}
+</div>
