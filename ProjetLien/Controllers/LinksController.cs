@@ -2,48 +2,52 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetLien.Models;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace ProjetLien.Controllers
 {
     public class LinksController : Controller
     {
-        public IActionResult Index()
+      
+       private readonly ILinkRepository _linkRepository;
+
+       public LinksController(ILinkRepository linkRepository)
+       {
+           _linkRepository = linkRepository;
+       }
+
+        public IActionResult Index(int perPage = 12, int nbPage = 1, string search = "")
         {
-            //TODO : Récupérer le model depuis le Repository...
+            //Je récupère la totalité de mes liens en BDD
+            var allLinks = _linkRepository.GetAllLinks();
+            if(string.IsNullOrWhiteSpace(search) == false)
+            {
+                allLinks = allLinks.Where(link =>
+                link.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase) ||
+                link.Description.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+            }
+          
+
+            int nbLinkTotal = allLinks.Count();
+
+            // Faire ma pagination
+            // LINQ : Take pour prendre un certain nombre d'éléments
+            // LINQ : Skip pour passer un certain nombre d'éléments
+            allLinks = allLinks.Skip(perPage * (nbPage - 1))
+                               .Take(perPage)
+                               .ToList();
+
             var vm = new ListLinksViewModel()
             {
-                LstLinks = new List<LinkModel>()
-                {
-                    new LinkModel()
-                    {
-                        IdLink = 1,
-                        Title = "test1",
-                        URL = "https://google.com",
-                        Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galle"
-                    },
-                     new LinkModel()
-                    {
-                        IdLink = 2,
-                        Title = "test2",
-                        URL = "https://google.com",
-                        Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galle"
-                    },
-                      new LinkModel()
-                    {
-                        IdLink = 3,
-                        Title = "test3",
-                        URL = "https://google.com",
-                        Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galle"
-                    },
-                       new LinkModel()
-                    {
-                        IdLink = 4,
-                        Title = "test4",
-                        URL = "https://google.com",
-                        Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galle"
-                    },
-                }
+                LstLinks = allLinks,
+                NbLinksTotalBdd = nbLinkTotal,
+                NbPage = nbPage,
+                PerPage = perPage,
+                Recherche = search
             };
+
             return View(vm);
         }
     }

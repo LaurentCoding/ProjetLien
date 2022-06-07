@@ -1,3 +1,5 @@
+using DTW.Repository.Config;
+using DTW.Repository.Links;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static DTW.Repository.Config.IBaseRepository;
+using IBaseRepository = DTW.Repository.Config.IBaseRepository.IBaseRepository;
 
 namespace ProjetLien
 {
@@ -23,6 +27,9 @@ namespace ProjetLien
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IBaseRepository, BaseRepository>();
+            services.AddTransient<ILinkRepository, LinkRepository>();
+
             services.AddControllersWithViews();
         }
 

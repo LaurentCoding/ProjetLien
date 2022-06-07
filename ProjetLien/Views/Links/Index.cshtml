@@ -5,23 +5,91 @@
 
 <h1>Les liens : </h1>
 <i>Vous trouverez si dessous les liens ajoutés par la communauté...</i>
-<div class="text-center mt-3 row ">
+
+	<form asp-controller="Links" asp-action="Index" method="get" class="row mt-3">
+		<div class="col-8">
+			<input value="@Model.Recherche" type="text" name="search" placeholder="Tapez votre recherche ici ..." class="form-control" />
+		</div>
+		<div class="col-4">
+			<button type="submit" class="btn btn-primary">Rechercher</button>
+		</div>
+		
+	</form>
+<div class="row text-center mt-4">
+	<div class="col-12">
+		<i>@Model.NbLinksTotalBdd lien(s) trouvés.</i>
+	</div>
+</div>
+
+<div class="text-center mt-3 row">
 	@foreach(var link in Model.LstLinks)
 	{
-		<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+		<div class="col-12 col-sm-6 col-md-4 col-lg-3 pt-2 pb-2">
 			<div class="card" style="">
 				<img class="card-img-top" src="https://picsum.photos/200/300" alt="Card image cap">
+				<div classss="card-header">
+					Lien n° @link.IdLink
+				</div>
 				<div class="card-body">
 					<h5 class="card-title">@link.Title</h5>
 					<p class="card-text">@link.Description</p>
-					<a href="@link.URL" class="btn btn-primary">Go !</a>
+					<a target="_blank" href="@link.URL" class="btn btn-primary">Go !</a>
+				</div>
+				<div class="card-footer text-muted">
+						Par: 	
 				</div>
 			</div>
 		<div>
 
 			</div>
-		
-			@link.Title : @link.URL
+			
 		</div>
 	}
+</div>
+
+<div class="row m-3 text-center">
+	<nav class="m-auto" aria-label="...">
+	  <ul class="pagination">
+		  @if(Model.NbPage > 1)
+			{
+				<!-- Première page -->
+				<li class="page-item">
+					<a class="page-link" asp-controller="Links" asp-action="Index" asp-route-perPage="@Model.PerPage" 
+						asp-route-nbpage="1"
+						asp-route-search="@Model.Recherche">Premiére page</a>
+				</li>
+				<!-- Page précédente -->
+				<li class="page-item">
+					<a class="page-link" asp-controller="Links" asp-action="Index" asp-route-perPage="@Model.PerPage"
+						asp-route-nbpage="@(Model.NbPage - 1)"
+						asp-route-search="@Model.Recherche">@(Model.NbPage - 1)</a></li>
+			}
+		
+			<!-- Page actuelle -->
+			<li class="page-item active">
+				<a class="page-link" asp-controller="Links" asp-action="Index" asp-route-perPage="@Model.PerPage" 
+					asp-route-nbpage="@Model.NbPageTotal"
+					asp-route-search="@Model.Recherche">@Model.NbPage<span class="sr-only">(current)</span></a>
+			</li>
+
+			 
+			 @if(Model.NbPageTotal > Model.NbPage)
+			 {
+				 		 <!-- Page suivante -->
+				 <li class="page-item">
+					<a class="page-link" asp-controller="Links" asp-action="Index" asp-route-perPage="@Model.PerPage" 
+						asp-route-nbpage="@(Model.NbPage + 1)"
+						asp-route-search="@Model.Recherche">@(Model.NbPage + 1)</a>
+				</li>
+
+				 <!-- Derniére page -->
+				 <li class="page-item">
+					<a class="page-link"  asp-controller="Links" asp-action="Index" asp-route-perPage="@Model.PerPage"
+						asp-route-nbpage="@Model.NbPageTotal"
+						asp-route-search="@Model.Recherche">Derniére page</a>
+				</li>
+			 }
+		
+	  </ul>
+</nav>
 </div>
